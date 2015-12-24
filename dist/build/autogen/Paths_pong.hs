@@ -16,22 +16,22 @@ catchIO :: IO a -> (Exception.IOException -> IO a) -> IO a
 catchIO = Exception.catch
 
 version :: Version
-version = Version [0,1,0,0] []
+version = Version [1,0] []
 prefix, bindirrel :: FilePath
-prefix        = "E:\\Haskell\\pong\\.cabal-sandbox"
+prefix        = "C:\\sinigr\\project\\pong\\.cabal-sandbox"
 bindirrel     = "bin"
 
 getBinDir :: IO FilePath
 getBinDir = getPrefixDirRel bindirrel
 
 getLibDir :: IO FilePath
-getLibDir = getPrefixDirRel "x86_64-windows-ghc-7.10.2\\pong-0.1.0.0-LfJ5HmLWXQTCpdBtjfsa9n"
+getLibDir = getPrefixDirRel "x86_64-windows-ghc-7.10.2\\pong-1.0-BWI54dQCfi67w1w0WV9KE4"
 
 getDataDir :: IO FilePath
-getDataDir =  catchIO (getEnv "pong_datadir") (\_ -> getPrefixDirRel "x86_64-windows-ghc-7.10.2\\pong-0.1.0.0")
+getDataDir =  catchIO (getEnv "pong_datadir") (\_ -> getPrefixDirRel "x86_64-windows-ghc-7.10.2\\pong-1.0")
 
 getLibexecDir :: IO FilePath
-getLibexecDir = getPrefixDirRel "pong-0.1.0.0-LfJ5HmLWXQTCpdBtjfsa9n"
+getLibexecDir = getPrefixDirRel "pong-1.0-BWI54dQCfi67w1w0WV9KE4"
 
 getSysconfDir :: IO FilePath
 getSysconfDir = getPrefixDirRel "etc"

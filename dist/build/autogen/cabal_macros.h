@@ -84,5 +84,5 @@
   (major1) == 2 && (major2) <  22 || \
   (major1) == 2 && (major2) == 22 && (minor) <= 0)
 
-#define CURRENT_PACKAGE_KEY "pong_LfJ5HmLWXQTCpdBtjfsa9n"
+#define CURRENT_PACKAGE_KEY "pong_BWI54dQCfi67w1w0WV9KE4"
 
