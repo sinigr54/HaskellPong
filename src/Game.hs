@@ -61,14 +61,14 @@ wallCollision (_, y) radius = topCollision || bottomCollision
 paddleRightCollision :: Position -> Position -> Width -> Bool
 paddleRightCollision (xb, yb) (xp, yp) w = collision
  	where
-		height = yp
- 		collision = xb - w <= xp && yb <= height && yb >= (height - heightPaddle)
+		height = heightPaddle / 2
+ 		collision = xb - w <= xp && yb <= (yp + height) && yb >= (yp - height)
 
 paddleLeftCollision :: Position -> Position -> Width -> Bool
 paddleLeftCollision (xb, yb) (xp, yp) w = collision
  	where
-		height = yp
- 		collision = xb + w >= xp && yb <= height && yb >= (height - heightPaddle)
+		height = heightPaddle / 2
+ 		collision = xb + w >= xp && yb <= (yp + height) && yb >= (yp - height)
 
 -- Detect a collision with a paddle. Upon collisions,
 -- change the velocity of the ball to bounce it off the paddle.
@@ -106,6 +106,21 @@ wallBounce game = game { ballVelocity = (vx, vy') }
             vy
 
 keyboardFunction :: Event -> PongGame -> PongGame
-keyboardFunction (EventKey (Char 's') _ _ _) game =
-  game { ballLocation = (0, 0) }
+keyboardFunction (EventKey (SpecialKey KeySpace) _ _ _) game = game { player1Paddle = (385, 0), player2Paddle = ((-385), 0), ballLocation = (0, 0) }
+keyboardFunction (EventKey (SpecialKey KeyUp) _ _ _) game = game { player1Paddle = (vx, vy') }
+	where
+		(vx, vy) = player1Paddle game
+		vy' = vy + 10
+keyboardFunction (EventKey (SpecialKey KeyDown) _ _ _) game = game { player1Paddle = (vx, vy') }
+	where
+		(vx, vy) = player1Paddle game
+		vy' = vy - 10
+keyboardFunction (EventKey (Char 'w') _ _ _) game = game { player2Paddle = (vx, vy') }
+	where
+		(vx, vy) = player2Paddle game
+		vy' = vy + 10
+keyboardFunction (EventKey (Char 's') _ _ _) game = game { player2Paddle = (vx, vy') }
+	where
+		(vx, vy) = player2Paddle game
+		vy' = vy - 10
 keyboardFunction _ game = game
