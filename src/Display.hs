@@ -16,14 +16,13 @@ fps = 60
 background :: Color
 background = dark $ dark $ dark blue
 
-
 -- draw the current state
 render :: PongGame -> Picture
 render game =
 	pictures
 	[ ball, walls
-	, mkPaddle rose 385 $ player1Paddle game
-	, mkPaddle orange (-385) $ player2Paddle game
+	, mkPaddle rose $ player1Paddle game
+	, mkPaddle orange $ player2Paddle game
 	]
 	where
 		-- The ball
@@ -41,8 +40,8 @@ render game =
 		walls = pictures [wall 300, wall (-300)]
 
 		--  Make a paddle of a given border and vertical offset
-		mkPaddle :: Color -> Float -> Float -> Picture
-		mkPaddle col x y = pictures
+		mkPaddle :: Color -> Position -> Picture
+		mkPaddle col (x, y) = pictures
 		  [ --translate x y $ color col $ rectangleSolid 26 86 -- borders
 		   translate x y $ color paddleColor $ rectangleSolid widthPaddle heightPaddle -- filling
 		  ]
@@ -52,4 +51,4 @@ render game =
 -- Update the game by moving the ball.
 -- Ignoring the ViewPort argument.
 update :: ViewPort -> Float -> PongGame -> PongGame
-update _ seconds = wallBounce . moveBall seconds
+update _ seconds = paddleBounce . wallBounce . moveBall seconds

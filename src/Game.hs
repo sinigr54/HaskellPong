@@ -33,8 +33,8 @@ initialState :: PongGame
 initialState = Game
 	{ ballLocation = (-10, 30)
 	, ballVelocity = (88, -166)
-	, player1Paddle = 0
-	, player2Paddle = 0
+	, player1Paddle = (385, 150)
+	, player2Paddle = (-385, 0)
 	}
 
 
@@ -56,16 +56,33 @@ wallCollision (_, y) radius = topCollision || bottomCollision
     topCollision    = y - radius <= -fromIntegral height / 2
     bottomCollision = y + radius >=  fromIntegral height / 2
 
-paddleCollision :: Position -> Position -> Width -> Bool
-paddleCollision (xb, yb) (xp, yp) w = collisionL || collisionR
+paddleRightCollision :: Position -> Position -> Width -> Bool
+paddleRightCollision (xb, yb) (xp, yp) w = collision
  	where
- 		collisionL = xb -
-		collisionR =
+		height = yp
+ 		collision = xb - w <= xp && yb <= height && yb >= (height - heightPaddle)
+
+paddleLeftCollision :: Position -> Position -> Width -> Bool
+paddleLeftCollision (xb, yb) (xp, yp) w = collision
+ 	where
+		height = yp
+ 		collision = xb + w >= xp && yb <= height && yb >= (height - heightPaddle)
 
 -- Detect a collision with a paddle. Upon collisions,
 -- change the velocity of the ball to bounce it off the paddle.
 paddleBounce :: PongGame -> PongGame
-paddleBounce = undefined
+paddleBounce game = game { ballVelocity = (vx', vy') }
+	where
+		w = widthPaddle
+		(vx, vy) = ballVelocity game
+
+		vx' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w)
+			|| (paddleRightCollision (ballLocation game) (player2Paddle game) w)
+			then
+				-vx
+			else
+				vx
+		vy' = vy
 
 -- Detect a collision with one of the side walls. Upon collisions,
 -- change the velocity of the ball to bounce it off the wall.
