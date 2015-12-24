@@ -40,7 +40,7 @@ type Position = (Float, Float)
 initialState :: PongGame
 initialState = Game
 	{ ballLocation = (-10, 30)
-	, ballVelocity = (100, -200)
+	, ballVelocity = (200, -300)
 	, player1Paddle = (385, 150)
 	, player2Paddle = (-385, 0)
 	, player1Up = False
@@ -50,11 +50,12 @@ initialState = Game
 	}
 
 yOffset :: Float
-yOffset = 2
+yOffset = 5
 
 inBox :: Float -> Bool
-inBox y = y > 0 && y + heightPaddle <= widthField ||
-	  y < 0 && y >= -widthField
+inBox 0 = True
+inBox y = y > 0 && y + heightPaddle / 2 + 10 <= heightField ||
+	  y < 0 && y - heightPaddle / 2 - 10 >= -heightField
 
 movePaddles :: Float -> PongGame -> PongGame
 movePaddles seconds game = game { player1Paddle = (x1', y1'), player2Paddle = (x2', y2') }
@@ -66,7 +67,7 @@ movePaddles seconds game = game { player1Paddle = (x1', y1'), player2Paddle = (x
     x1' = x1
     y1' = if (player1Up game == True) then if (inBox (y1 + yOffset)) then (y1 + yOffset) else y1 else if (player1Down game == True) then if (inBox (y1 - yOffset)) then	(y1 - yOffset) else y1 else y1
     x2' = x2
-    y2' = if (player2Up game == True) then y2+5 else if (player2Down game == True) then y2-5 else y2
+    y2' = if (player2Up game == True) then if (inBox (y2 + yOffset)) then (y2 + yOffset) else y2 else if (player2Down game == True) then if (inBox (y2 - yOffset)) then	(y2 - yOffset) else y2 else y2
 
 -- | Update the ball position using its current velocity.
 moveBall :: Float -> PongGame -> PongGame
