@@ -12,8 +12,8 @@ data PongGame = Game
 	
 -- window stats
 width, height, offset :: Int
-width = 300
-height = 300
+width = 800
+height = 600
 offset = 100
 
 	
@@ -21,13 +21,12 @@ offset = 100
 type Radius = Float
 type Position = (Float, Float)
 
-
 	
 --init game with starting state
 initialState :: PongGame
 initialState = Game
 	{ ballLocation = (-10, 30)
-	, ballVelocity = (135, -166)
+	, ballVelocity = (88, -166)
 	, player1 = 40
 	, player2 = -80
 	}
@@ -48,8 +47,8 @@ moveBall seconds game = game { ballLocation = (x', y') }
 wallCollision :: Position -> Radius -> Bool 
 wallCollision (_, y) radius = topCollision || bottomCollision
   where
-    topCollision    = y - radius <= -fromIntegral width / 2 
-    bottomCollision = y + radius >=  fromIntegral width / 2
+    topCollision    = y - radius <= -fromIntegral height / 2 
+    bottomCollision = y + radius >=  fromIntegral height / 2
 	
 	
 -- Detect a collision with a paddle. Upon collisions,
