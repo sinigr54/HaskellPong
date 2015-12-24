@@ -1,5 +1,7 @@
 module Game where
 
+import Graphics.Gloss.Interface.Pure.Game
+
 -- state of pong game
 data PongGame = Game
 	{ ballLocation :: (Float, Float) 	-- x, y of the pong ball location
@@ -32,7 +34,7 @@ type Position = (Float, Float)
 initialState :: PongGame
 initialState = Game
 	{ ballLocation = (-10, 30)
-	, ballVelocity = (88, -166)
+	, ballVelocity = (100, -200)
 	, player1Paddle = (385, 150)
 	, player2Paddle = (-385, 0)
 	}
@@ -102,3 +104,8 @@ wallBounce game = game { ballVelocity = (vx, vy') }
            else
             -- Do nothing. Return the old velocity.
             vy
+
+keyboardFunction :: Event -> PongGame -> PongGame
+keyboardFunction (EventKey (Char 's') _ _ _) game =
+  game { ballLocation = (0, 0) }
+keyboardFunction _ game = game
