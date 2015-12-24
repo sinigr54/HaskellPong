@@ -9,6 +9,10 @@ data PongGame = Game
 	, player1Paddle :: (Float, Float)	-- left player paddle location
 										-- Zero is middle of screen
 	, player2Paddle :: (Float, Float)	-- right player paddle height
+	, player1Up :: Bool
+	, player1Down :: Bool
+	, player2Up :: Bool
+	, player2Down :: Bool
 	} deriving Show
 
 
@@ -37,8 +41,24 @@ initialState = Game
 	, ballVelocity = (100, -200)
 	, player1Paddle = (385, 150)
 	, player2Paddle = (-385, 0)
+	, player1Up = False
+	, player1Down = False
+	, player2Up = False
+	, player2Down = False
 	}
 
+
+movePaddles :: Float -> PongGame -> PongGame
+movePaddles seconds game = game { player1Paddle = (x1', y1'), player2Paddle = (x2', y2') }
+  where
+    -- Old locations
+    (x1, y1) = player1Paddle game
+    (x2, y2) = player2Paddle game
+    -- New locations
+    x1' = x1
+    y1' = if (player1Up game == True) then y1+5 else if (player1Down game == True) then y1-5 else y1
+    x2' = x2
+    y2' = if (player2Up game == True) then y2+5 else if (player2Down game == True) then y2-5 else y2
 
 -- | Update the ball position using its current velocity.
 moveBall :: Float -> PongGame -> PongGame
@@ -107,19 +127,20 @@ wallBounce game = game { ballVelocity = (vx, vy') }
 
 keyboardFunction :: Event -> PongGame -> PongGame
 keyboardFunction (EventKey (SpecialKey KeySpace) _ _ _) game = game { player1Paddle = (385, 0), player2Paddle = ((-385), 0), ballLocation = (0, 0) }
-keyboardFunction (EventKey (SpecialKey KeyUp) _ _ _) game = game { player1Paddle = (vx, vy') }
+
+keyboardFunction (EventKey (SpecialKey KeyUp) _ _ _) game = if (player1Up game == False) then game { player1Up = True, player1Down = False } else game { player1Up = False } --game { player1Paddle = (vx, vy') }
 	where
 		(vx, vy) = player1Paddle game
 		vy' = vy + 10
-keyboardFunction (EventKey (SpecialKey KeyDown) _ _ _) game = game { player1Paddle = (vx, vy') }
+keyboardFunction (EventKey (SpecialKey KeyDown) _ _ _) game = if (player1Down game == False) then game { player1Down = True, player1Up = False } else game { player1Down = False } --game { player1Paddle = (vx, vy') }
 	where
 		(vx, vy) = player1Paddle game
 		vy' = vy - 10
-keyboardFunction (EventKey (Char 'w') _ _ _) game = game { player2Paddle = (vx, vy') }
+keyboardFunction (EventKey (Char 'w') _ _ _) game = if (player2Up game == False) then game { player2Up = True, player2Down = False } else game { player2Up = False } --game { player2Paddle = (vx, vy') }
 	where
 		(vx, vy) = player2Paddle game
 		vy' = vy + 10
-keyboardFunction (EventKey (Char 's') _ _ _) game = game { player2Paddle = (vx, vy') }
+keyboardFunction (EventKey (Char 's') _ _ _) game = if (player2Down game == False) then game { player2Down = True, player2Up = False } else game { player2Down = False } --game { player2Paddle = (vx, vy') }
 	where
 		(vx, vy) = player2Paddle game
 		vy' = vy - 10

@@ -48,4 +48,4 @@ render game =
 -- Update the game by moving the ball.
 -- Ignoring the ViewPort argument.
 update :: Float -> PongGame -> PongGame
-update seconds = paddleBounce . wallBounce . moveBall seconds
+update seconds = paddleBounce . wallBounce . moveBall seconds . movePaddles seconds
