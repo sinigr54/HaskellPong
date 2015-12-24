@@ -6,7 +6,8 @@ import Graphics.Gloss.Data.ViewPort -- viewport is required for update func
 import Game
 
 window :: Display
-window = InWindow "PONG" (200,200) (10,10)
+window = InWindow "Pong" (width, height) (offset, offset)
+
 
 -- frames per second
 fps :: Int
@@ -51,4 +52,4 @@ render game =
 -- Update the game by moving the ball.
 -- Ignoring the ViewPort argument.
 update :: ViewPort -> Float -> PongGame -> PongGame
-update _ = moveBall 
+update _ seconds = wallBounce . moveBall seconds 
