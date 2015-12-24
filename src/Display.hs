@@ -11,7 +11,7 @@ window = InWindow "Pong" (width, height) (offset, offset)
 
 -- frames per second
 fps :: Int
-fps = 60
+fps = 100
 
 background :: Color
 background = black
