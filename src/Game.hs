@@ -130,22 +130,37 @@ paddleBounce game = game { ballVelocity = (vx', vy') }
 			else
 				vx
 				
-		vy' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w)
-			|| (paddleRightCollision (ballLocation game) (player2Paddle game) w)
+		vy' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w)			
 			then
 				if( (snd $ ballLocation game) < ( (snd $ player1Paddle game) - h) ) then -- upper part
-					increase vy 50
+					increase $ sendUp vy
 				else if( (snd $ ballLocation game) > ( (snd $ player1Paddle game) + h) ) then -- lower part
-					increase vy (-50)
-				else reduce(vy) -- middle part, gravitate ball y velocity towards null
+					increase $ sendDown vy
+				else reduce vy -- middle part, gravitate ball y velocity towards null, while also inverting it
+				
+			else if (paddleRightCollision (ballLocation game) (player2Paddle game) w) then
+				if( (snd $ ballLocation game) < ( (snd $ player2Paddle game) - h) ) then -- upper part
+					increase $ sendUp vy
+				else if( (snd $ ballLocation game) > ( (snd $ player2Paddle game) + h) ) then -- lower part
+					increase $ sendDown vy
+				else reduce vy -- middle part, gravitate ball y velocity towards null, while also inverting it
 			else
 				vy
-		--where
+		
+		invert :: Float -> Float
+		invert v = -v
+		
+		sendUp :: Float -> Float
+		sendUp v = if(v>0) then -v else v
+		
+		sendDown :: Float -> Float
+		sendDown v = if(v<0) then -v else v
+		
 		reduce :: Float -> Float
 		reduce v = if(v>0)then v-50 else v+50
 		
-		increase :: Float -> Float -> Float
-		increase v a = if(v>0)then v+a else v-a
+		increase :: Float -> Float
+		increase v = if(v>0)then v+50 else v-50
 
 -- Detect a collision with one of the side walls. Upon collisions,
 -- change the velocity of the ball to bounce it off the wall.
