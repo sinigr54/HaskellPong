@@ -8,7 +8,6 @@ import Game
 window :: Display
 window = InWindow "Pong" (width, height) (offset, offset)
 
-
 -- frames per second
 fps :: Int
 fps = 100
@@ -20,7 +19,7 @@ background = black
 render :: PongGame -> Picture
 render game =
 	pictures
-	[ ball, walls
+	[ ball
 	, mkPaddle rose $ player1Paddle game
 	, mkPaddle orange $ player2Paddle game
 	]

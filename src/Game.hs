@@ -29,20 +29,33 @@ heightPaddle = 80
 widthField = 400
 heightField = 300
 
+-- players stats
+p1X, p2X, p1Y, p2Y :: Float
+p1X = widthField - 15
+p2X = -p1X
+p1Y = 0
+p2Y = 0
+
+-- ball stats
+velocityX, velocityY, ballX, ballY :: Float
+velocityX = 300
+velocityY = -300
+ballX = 0
+ballY = 0
+
 -- ball-related type alliases
 type Radius = Float
 type Width = Float
 type Height = Float
 type Position = (Float, Float)
 
-
 --init game with starting state
 initialState :: PongGame
 initialState = Game
-	{ ballLocation = (-10, 30)
-	, ballVelocity = (200, -300)
-	, player1Paddle = (385, 150)
-	, player2Paddle = (-385, 0)
+	{ ballLocation = (ballX, ballY)
+	, ballVelocity = (velocityX, velocityY)
+	, player1Paddle = (p1X, p1Y)
+	, player2Paddle = (p2X, p2Y)
 	, player1Up = False
 	, player1Down = False
 	, player2Up = False
@@ -54,8 +67,8 @@ yOffset = 5
 
 inBox :: Float -> Bool
 inBox 0 = True
-inBox y = y > 0 && y + heightPaddle / 2 + 10 <= heightField ||
-	  y < 0 && y - heightPaddle / 2 - 10 >= -heightField
+inBox y = y > 0 && y + heightPaddle / 2 <= heightField ||
+	  y < 0 && y - heightPaddle / 2 >= -heightField
 
 movePaddles :: Float -> PongGame -> PongGame
 movePaddles seconds game = game { player1Paddle = (x1', y1'), player2Paddle = (x2', y2') }
@@ -91,12 +104,14 @@ paddleRightCollision :: Position -> Position -> Width -> Bool
 paddleRightCollision (xb, yb) (xp, yp) w = collision
  	where
 		height = heightPaddle / 2
+		-- must be update
  		collision = xb - w <= xp && yb <= (yp + height) && yb >= (yp - height)
 
 paddleLeftCollision :: Position -> Position -> Width -> Bool
 paddleLeftCollision (xb, yb) (xp, yp) w = collision
  	where
 		height = heightPaddle / 2
+		-- must be update
  		collision = xb + w >= xp && yb <= (yp + height) && yb >= (yp - height)
 
 -- Detect a collision with a paddle. Upon collisions,
@@ -135,25 +150,14 @@ wallBounce game = game { ballVelocity = (vx, vy') }
             vy
 
 keyboardFunction :: Event -> PongGame -> PongGame
-keyboardFunction (EventKey (SpecialKey KeySpace) _ _ _) game = game { player1Paddle = (385, 0), player2Paddle = ((-385), 0), ballLocation = (0, 0) }
+keyboardFunction (EventKey (SpecialKey KeySpace) _ _ _) game = game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY) }
 
 keyboardFunction (EventKey (SpecialKey KeyUp) _ _ _) game = if (player1Up game == False) then game { player1Up = True, player1Down = False } else game { player1Up = False } --game { player1Paddle = (vx, vy') }
-	where
-		(vx, vy) = player1Paddle game
-		vy' = if (inBox (vy + yOffset)) then vy + yOffset else vy
 
 keyboardFunction (EventKey (SpecialKey KeyDown) _ _ _) game = if (player1Down game == False) then game { player1Down = True, player1Up = False } else game { player1Down = False } --game { player1Paddle = (vx, vy') }
-	where
-		(vx, vy) = player1Paddle game
-		vy' = vy - yOffset
 
 keyboardFunction (EventKey (Char 'w') _ _ _) game = if (player2Up game == False) then game { player2Up = True, player2Down = False } else game { player2Up = False } --game { player2Paddle = (vx, vy') }
-	where
-		(vx, vy) = player2Paddle game
-		vy' = vy + yOffset
 
 keyboardFunction (EventKey (Char 's') _ _ _) game = if (player2Down game == False) then game { player2Down = True, player2Up = False } else game { player2Down = False } --game { player2Paddle = (vx, vy') }
-	where
-		(vx, vy) = player2Paddle game
-		vy' = vy - yOffset
+
 keyboardFunction _ game = game
