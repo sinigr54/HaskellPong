@@ -4,7 +4,7 @@ import Game
 import Graphics.Gloss.Interface.Pure.Game -- event keys
 
 keyboardFunction :: Event -> PongGame -> PongGame
-keyboardFunction (EventKey (SpecialKey KeySpace) _ _ _) game = game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(300,-300) }
+keyboardFunction (EventKey (SpecialKey KeySpace) _ _ _) game = game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(velocityX,velocityY) }
 
 keyboardFunction (EventKey (SpecialKey KeyUp) _ _ _) game = if (player1Up game == False) then game { player1Up = True, player1Down = False } else game { player1Up = False } --game { player1Paddle = (vx, vy') }
 

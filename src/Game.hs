@@ -38,7 +38,7 @@ p2Y = 0
 
 -- ball stats
 velocityX, velocityY, ballX, ballY :: Float
-velocityX = 300
+velocityX = 350
 velocityY = -300
 ballX = 0
 ballY = 0
@@ -105,14 +105,14 @@ paddleRightCollision (xb, yb) (xp, yp) w = collision
  	where
 		height = heightPaddle / 2
 		-- must be update
- 		collision = xb - w <= xp && yb <= (yp + height) && yb >= (yp - height)
+ 		collision = xb - w <= xp && xb + w >= xp && yb <= (yp + height) && yb >= (yp - height)
 
 paddleLeftCollision :: Position -> Position -> Width -> Bool
 paddleLeftCollision (xb, yb) (xp, yp) w = collision
  	where
 		height = heightPaddle / 2
 		-- must be update
- 		collision = xb + w >= xp && yb <= (yp + height) && yb >= (yp - height)
+ 		collision = xb + w >= xp && xb - w <= xp && yb <= (yp + height) && yb >= (yp - height)
 
 -- Detect a collision with a paddle. Upon collisions,
 -- change the velocity of the ball to bounce it off the paddle.
@@ -123,8 +123,8 @@ paddleBounce game = game { ballVelocity = (vx', vy') }
 		h = heightPaddle / 4
 		(vx, vy) = ballVelocity game
 
-		vx' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w)
-			|| (paddleRightCollision (ballLocation game) (player2Paddle game) w)
+		vx' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w) && (vx > 0)
+			|| (paddleRightCollision (ballLocation game) (player2Paddle game) w) && (vx < 0)
 			then				
 				-vx
 			else
