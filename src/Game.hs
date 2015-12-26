@@ -8,6 +8,7 @@ data PongGame = Game
 	, player1Paddle :: (Float, Float)	-- left player paddle location
 										-- Zero is middle of screen
 	, player2Paddle :: (Float, Float)	-- right player paddle height
+	-- flags used for paddle movement
 	, player1Up :: Bool
 	, player1Down :: Bool
 	, player2Up :: Bool
@@ -42,13 +43,13 @@ velocityY = -300
 ballX = 0
 ballY = 0
 
--- ball-related type alliases
+-- game-related type alliases
 type Radius = Float
 type Width = Float
 type Height = Float
 type Position = (Float, Float)
 
---init game with starting state
+-- init game with starting state
 initialState :: PongGame
 initialState = Game
 	{ ballLocation = (ballX, ballY)
@@ -119,22 +120,39 @@ paddleBounce :: PongGame -> PongGame
 paddleBounce game = game { ballVelocity = (vx', vy') }
 	where
 		w = widthPaddle
+		h = heightPaddle / 4
 		(vx, vy) = ballVelocity game
 
 		vx' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w)
 			|| (paddleRightCollision (ballLocation game) (player2Paddle game) w)
-			then
+			then				
 				-vx
 			else
 				vx
-		vy' = vy
+				
+		vy' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w)
+			|| (paddleRightCollision (ballLocation game) (player2Paddle game) w)
+			then
+				if( (snd $ ballLocation game) < ( (snd $ player1Paddle game) - h) ) then -- upper part
+					increase vy 50
+				else if( (snd $ ballLocation game) > ( (snd $ player1Paddle game) + h) ) then -- lower part
+					increase vy (-50)
+				else reduce(vy) -- middle part, gravitate ball y velocity towards null
+			else
+				vy
+		--where
+		reduce :: Float -> Float
+		reduce v = if(v>0)then v-50 else v+50
+		
+		increase :: Float -> Float -> Float
+		increase v a = if(v>0)then v+a else v-a
 
 -- Detect a collision with one of the side walls. Upon collisions,
 -- change the velocity of the ball to bounce it off the wall.
 wallBounce :: PongGame -> PongGame
 wallBounce game = game { ballVelocity = (vx, vy') }
   where
-    -- Radius. Use the same thing as in `render`.
+    -- ball radius, same as in render.
     radius = 10
 
     -- The old velocities.
