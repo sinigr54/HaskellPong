@@ -56,14 +56,17 @@ type Position = (Float, Float)
 -- init game with starting state
 initialState :: PongGame
 initialState = Game
-	{ ballLocation = (ballX, ballY)
+	{
+	  ballLocation = (ballX, ballY)
 	, ballVelocity = (velocityX, velocityY)
 	, player1Paddle = (p1X, p1Y)
 	, player2Paddle = (p2X, p2Y)
+
 	, player1Up = False
 	, player1Down = False
 	, player2Up = False
 	, player2Down = False
+
 	, player1Score = 0
 	, player2Score = 0
 	}
@@ -122,8 +125,8 @@ scoreBounce game = newGame
 		radius = 10 --Ball radius
 		(x, y) = ballLocation game
 		newGame = if
-					| (x - radius > p1X) -> newRound game {player2Score = (player2Score game + 1)} -- increase p2 score
-					| (x + radius < p2X) -> newRound game {player1Score = (player1Score game + 1)} -- increase p1 score
+					| (x - radius * 10 > p1X) -> newRound game {player2Score = (player2Score game + 1)} -- increase p2 score
+					| (x + radius * 10 < p2X) -> newRound game {player1Score = (player1Score game + 1)} -- increase p1 score
 					| otherwise -> game
 
 -- | Given position and radius of the ball, return whether a collision occurred.
