@@ -64,9 +64,13 @@ initialState = Game
 	, player1Down = False
 	, player2Up = False
 	, player2Down = False
-	, player1Score = 0
+	, player1Score = 15
 	, player2Score = 0
 	}
+	
+newRound :: PongGame -> PongGame
+newRound game = if |(player1Score game < player2Score game) -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(velocityX,velocityY) } 
+				   | otherwise -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(-velocityX, -velocityY) } 
 
 -- paddle movement value
 yOffset :: Float
