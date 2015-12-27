@@ -42,8 +42,8 @@ p2Y = 0
 
 -- ball stats
 velocityX, velocityY, ballX, ballY :: Float
-velocityX = 250
-velocityY = -200
+velocityX = 400
+velocityY = 0
 ballX = 0
 ballY = 0
 
