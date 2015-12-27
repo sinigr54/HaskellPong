@@ -72,8 +72,14 @@ initialState = Game
 	}
 
 newRound :: PongGame -> PongGame
-newRound game = if |(player1Score game < player2Score game) -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(velocityX,velocityY) }
-				   | otherwise -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(-velocityX, -velocityY) }
+newRound game = if
+	|(player1Score game < player2Score game) -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(velocityX,velocityY) }
+	| otherwise -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(-velocityX, -velocityY) }
+
+newRound' :: PongGame -> Bool -> PongGame
+newRound' game whatPlayer = if
+			| whatPlayer == True -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(velocityX,velocityY) }
+			| otherwise -> game { player1Paddle = (p1X, p1Y), player2Paddle = (p2X, p2Y), ballLocation = (ballX, ballY), ballVelocity=(-velocityX, -velocityY) }
 
 -- paddle movement value
 yOffset :: Float
@@ -125,8 +131,8 @@ scoreBounce game = newGame
 		radius = 10 --Ball radius
 		(x, y) = ballLocation game
 		newGame = if
-					| (x - radius * 10 > p1X) -> newRound game {player2Score = (player2Score game + 1)} -- increase p2 score
-					| (x + radius * 10 < p2X) -> newRound game {player1Score = (player1Score game + 1)} -- increase p1 score
+					| (x - radius * 10 > p1X) -> newRound' game {player2Score = (player2Score game + 1)} True -- increase p2 score
+					| (x + radius * 10 < p2X) -> newRound' game {player1Score = (player1Score game + 1)} False -- increase p1 score
 					| otherwise -> game
 
 -- | Given position and radius of the ball, return whether a collision occurred.
