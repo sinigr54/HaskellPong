@@ -32,7 +32,7 @@ render game =
 		mkPaddle :: Color -> Position -> Picture
 		mkPaddle col (x, y) = translate x y $ color paddleColor $ rectangleSolid widthPaddle heightPaddle -- filling
 		
-		score = translate (-30) (260) $ Scale 0.3 0.3 $ color white $ text ((show p1Score) ++ ":" ++ (show p2Score))
+		score = translate (-30) (260) $ Scale 0.3 0.3 $ color white $ text ((show $ player1Score game) ++ ":" ++ (show $ player2Score game))
 
 		paddleColor = white
 

@@ -14,6 +14,9 @@ data PongGame = Game
 	, player1Down :: Bool
 	, player2Up :: Bool
 	, player2Down :: Bool
+	-- game scores
+	, player1Score :: Int
+	, player2Score :: Int
 	} deriving Show
 
 
@@ -36,11 +39,6 @@ p1X = widthField - 15
 p2X = -p1X
 p1Y = 0
 p2Y = 0
-
--- game score
-p1Score, p2Score :: Int
-p1Score = 0
-p2Score = 0
 
 -- ball stats
 velocityX, velocityY, ballX, ballY :: Float
@@ -66,6 +64,8 @@ initialState = Game
 	, player1Down = False
 	, player2Up = False
 	, player2Down = False
+	, player1Score = 0
+	, player2Score = 0
 	}
 
 -- paddle movement value
