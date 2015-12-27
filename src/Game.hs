@@ -1,5 +1,6 @@
-module Game where
+{-# LANGUAGE MultiWayIf #-}
 
+module Game where
 
 -- state of pong game
 data PongGame = Game
@@ -67,6 +68,7 @@ initialState = Game
 	, player2Down = False
 	}
 
+-- paddle movement value
 yOffset :: Float
 yOffset = 5
 
@@ -75,6 +77,7 @@ inBox 0 = True
 inBox y = y > 0 && y + heightPaddle / 2 <= heightField ||
 	  y < 0 && y - heightPaddle / 2 >= -heightField
 
+-- Update the paddles position
 movePaddles :: Float -> PongGame -> PongGame
 movePaddles seconds game = game { player1Paddle = (x1', y1'), player2Paddle = (x2', y2') }
   where
@@ -83,11 +86,21 @@ movePaddles seconds game = game { player1Paddle = (x1', y1'), player2Paddle = (x
     (x2, y2) = player2Paddle game
     -- New locations
     x1' = x1
-    y1' = if (player1Up game == True) then if (inBox (y1 + yOffset)) then (y1 + yOffset) else y1 else if (player1Down game == True) then if (inBox (y1 - yOffset)) then	(y1 - yOffset) else y1 else y1
+    y1' = if |(player1Up game == True) -> if 
+				|(inBox (y1 + yOffset)) -> (y1 + yOffset)
+				| otherwise -> y1 
+			 |(player1Down game == True) -> if 
+				|(inBox (y1 - yOffset)) -> (y1 - yOffset) 
+				| otherwise -> y1 
+			 | otherwise -> y1
     x2' = x2
-    y2' = if (player2Up game == True) then if (inBox (y2 + yOffset)) then (y2 + yOffset) else y2 else if (player2Down game == True) then if (inBox (y2 - yOffset)) then	(y2 - yOffset) else y2 else y2
+    y2' = if |(player2Up game == True) -> if |(inBox (y2 + yOffset)) -> (y2 + yOffset) 
+											 | otherwise -> y2 
+			 |(player2Down game == True) -> if |(inBox (y2 - yOffset)) -> (y2 - yOffset) 
+											   | otherwise -> y2 
+			 | otherwise -> y2
 
--- | Update the ball position using its current velocity.
+-- Update the ball position using its current velocity
 moveBall :: Float -> PongGame -> PongGame
 moveBall seconds game = game { ballLocation = (x', y') }
   where
@@ -126,29 +139,22 @@ paddleBounce game = game { ballVelocity = (vx', vy') }
 		h = heightPaddle / 4
 		(vx, vy) = ballVelocity game
 
-		vx' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w) && (vx > 0)
-			|| (paddleRightCollision (ballLocation game) (player2Paddle game) w) && (vx < 0)
-			then
-				-vx
-			else
-				vx
+		vx' = if 
+			| (paddleLeftCollision (ballLocation game) (player1Paddle game) w) && (vx > 0) || (paddleRightCollision (ballLocation game) (player2Paddle game) w) && (vx < 0) -> -vx
+			| otherwise -> vx
 
-		vy' = if (paddleLeftCollision (ballLocation game) (player1Paddle game) w)
-			then
-				if( (snd $ ballLocation game) < ( (snd $ player1Paddle game) - h) ) then -- upper part
-					increase $ sendUp vy
-				else if( (snd $ ballLocation game) > ( (snd $ player1Paddle game) + h) ) then -- lower part
-					increase $ sendDown vy
-				else reduce vy -- middle part, gravitate ball y velocity towards null, while also inverting it
+		vy' = if 
+			|(paddleLeftCollision (ballLocation game) (player1Paddle game) w) -> if 
+				| ( (snd $ ballLocation game) < ( (snd $ player1Paddle game) - h) ) -> increase $ sendUp vy -- upper part of the p1 paddle
+				| ( (snd $ ballLocation game) > ( (snd $ player1Paddle game) + h) ) -> increase $ sendDown vy -- lower part of the p1 paddle
+				| otherwise -> reduce vy -- middle part of the p1 paddle
 
-			else if (paddleRightCollision (ballLocation game) (player2Paddle game) w) then
-				if( (snd $ ballLocation game) < ( (snd $ player2Paddle game) - h) ) then -- upper part
-					increase $ sendUp vy
-				else if( (snd $ ballLocation game) > ( (snd $ player2Paddle game) + h) ) then -- lower part
-					increase $ sendDown vy
-				else reduce vy -- middle part, gravitate ball y velocity towards null, while also inverting it
-			else
-				vy
+			|(paddleRightCollision (ballLocation game) (player2Paddle game) w) -> if 
+				| ( (snd $ ballLocation game) < ( (snd $ player2Paddle game) - h) ) -> increase $ sendUp vy -- upper part of the p2 paddle
+				| ( (snd $ ballLocation game) > ( (snd $ player2Paddle game) + h) ) -> increase $ sendDown vy -- lower part of the p2 paddle
+				| otherwise -> reduce vy  -- middle part of the p2 paddle
+				
+			| otherwise -> vy -- no collision happened
 
 		invert :: Float -> Float
 		invert v = -v
@@ -176,10 +182,5 @@ wallBounce game = game { ballVelocity = (vx, vy') }
     -- The old velocities.
     (vx, vy) = ballVelocity game
 
-    vy' = if wallCollision (ballLocation game) radius
-          then
-             -- Update the velocity.
-             -vy
-           else
-            -- Do nothing. Return the old velocity.
-            vy
+    vy' = if | wallCollision (ballLocation game) radius -> -vy -- inverse the velocity
+             | otherwise -> vy -- do nothing
