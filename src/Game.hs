@@ -36,6 +36,11 @@ p2X = -p1X
 p1Y = 0
 p2Y = 0
 
+-- game score
+p1Score, p2Score :: Int
+p1Score = 0
+p2Score = 0
+
 -- ball stats
 velocityX, velocityY, ballX, ballY :: Float
 velocityX = 350

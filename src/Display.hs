@@ -19,7 +19,7 @@ background = black
 render :: PongGame -> Picture
 render game =
 	pictures
-	[ ball
+	[ ball, score
 	, mkPaddle rose $ player1Paddle game
 	, mkPaddle orange $ player2Paddle game
 	]
@@ -31,6 +31,8 @@ render game =
 		--  make a paddle of a given border and vertical offset
 		mkPaddle :: Color -> Position -> Picture
 		mkPaddle col (x, y) = translate x y $ color paddleColor $ rectangleSolid widthPaddle heightPaddle -- filling
+		
+		score = translate (-30) (260) $ Scale 0.3 0.3 $ color white $ text ((show p1Score) ++ ":" ++ (show p2Score))
 
 		paddleColor = white
 
