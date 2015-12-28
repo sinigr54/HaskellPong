@@ -1,7 +1,6 @@
 module Display where
 
 import Graphics.Gloss
-import Graphics.Gloss.Data.ViewPort -- viewport is required for update func
 
 import Game
 
@@ -20,8 +19,8 @@ render :: PongGame -> Picture
 render game =
 	pictures
 	[ ball, score
-	, mkPaddle rose $ player1Paddle game
-	, mkPaddle orange $ player2Paddle game
+	, mkPaddle $ player1Paddle game
+	, mkPaddle $ player2Paddle game
 	]
 	where
 		-- the ball
@@ -29,12 +28,12 @@ render game =
 		ballColor = white
 
 		--  make a paddle of a given border and vertical offset
-		mkPaddle :: Color -> Position -> Picture
-		mkPaddle col (x, y) = translate x y $ color paddleColor $ rectangleSolid widthPaddle heightPaddle -- filling
-
-		score = translate (-30) (260) $ Scale 0.3 0.3 $ color white $ text ((show $ player2Score game) ++ ":" ++ (show $ player1Score game))
+		mkPaddle :: Position -> Picture
+		mkPaddle (x, y) = translate x y $ color paddleColor $ rectangleSolid widthPaddle heightPaddle -- filling
 
 		paddleColor = white
+
+		score = translate (-30) (260) $ Scale 0.3 0.3 $ color white $ text ((show $ player2Score game) ++ ":" ++ (show $ player1Score game))
 
 -- update the game by moving the ball and paddles.
 update :: Float -> PongGame -> PongGame
