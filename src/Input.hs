@@ -14,4 +14,8 @@ keyboardFunction (EventKey (Char 'w') _ _ _) game = if (player2Up game == False)
 
 keyboardFunction (EventKey (Char 's') _ _ _) game = if (player2Down game == False) then game { player2Down = True, player2Up = False } else game { player2Down = False } --game { player2Paddle = (vx, vy') }
 
+keyboardFunction (EventKey (Char 'W') _ _ _) game = if (player2Up game == False) then game { player2Up = True, player2Down = False } else game { player2Up = False } --game { player2Paddle = (vx, vy') }
+
+keyboardFunction (EventKey (Char 'S') _ _ _) game = if (player2Down game == False) then game { player2Down = True, player2Up = False } else game { player2Down = False } --game { player2Paddle = (vx, vy') }
+
 keyboardFunction _ game = game

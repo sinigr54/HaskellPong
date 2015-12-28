@@ -201,7 +201,7 @@ wallBounce :: PongGame -> PongGame
 wallBounce game = game { ballVelocity = (vx, vy') }
   where
     -- ball radius, same as in render.
-    radius = 10
+    radius = 15
 
     -- The old velocities.
     (vx, vy) = ballVelocity game
