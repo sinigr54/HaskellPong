@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE MultiWayIf, GADTSyntax #-}
 
 module Game where
 
@@ -18,7 +18,6 @@ data PongGame = Game
 	, player1Score :: Int
 	, player2Score :: Int
 	} deriving Show
-
 
 -- window stats
 width, height, offset :: Int
@@ -135,13 +134,6 @@ scoreBounce game = newGame
 					| (x + radius * 10 < p2X) -> newRound' game {player1Score = (player1Score game + 1)} False -- increase p1 score
 					| otherwise -> game
 
--- | Given position and radius of the ball, return whether a collision occurred.
-wallCollision :: Position -> Radius -> Bool
-wallCollision (_, y) radius = topCollision || bottomCollision
-  where
-    topCollision    = y - radius <= -fromIntegral height / 2
-    bottomCollision = y + radius >=  fromIntegral height / 2
-
 paddleRightCollision :: Position -> Position -> Width -> Bool
 paddleRightCollision (xb, yb) (xp, yp) w = collision
  	where
@@ -195,13 +187,20 @@ paddleBounce game = game { ballVelocity = (vx', vy') }
 		increase :: Float -> Float
 		increase v = if (v > 0)then v + 50 else v - 50
 
+-- | Given position and radius of the ball, return whether a collision occurred.
+wallCollision :: Position -> Radius -> Bool
+wallCollision (_, y) radius = topCollision || bottomCollision
+	where
+		topCollision    = y - radius <= -(fromIntegral height / 2 + 15)
+		bottomCollision = y + radius >=  fromIntegral height / 2 + 15
+
 -- Detect a collision with one of the side walls. Upon collisions,
 -- change the velocity of the ball to bounce it off the wall.
 wallBounce :: PongGame -> PongGame
 wallBounce game = game { ballVelocity = (vx, vy') }
   where
     -- ball radius, same as in render.
-    radius = 15
+    radius = 10
 
     -- The old velocities.
     (vx, vy) = ballVelocity game
